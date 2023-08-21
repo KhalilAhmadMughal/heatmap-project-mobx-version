@@ -1,12 +1,13 @@
 import { IStatus } from "../types";
+import store from "../store";
+import { useSelector } from "react-redux";
+import { insertNewSalesStatusThunk } from "../store/heatmap/heatmapThunks";
+
 import { Card, Stack, Grid, TextField, Button, Link } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
-import store from "../store";
 import { UpdatingLoader } from "./UpdatingLoader";
-import { insertNewSalesStatusThunk } from "../store/heatmap/heatmapThunks";
 
 type FormValues = {
   statusTitle: string;
@@ -100,7 +101,9 @@ const InsertNewStatus = () => {
 
   return (
     <>
-      <Card sx={{ width: "50%", padding: "1rem", margin: "5rem auto 0 auto" }}>
+      <Card
+        sx={{ flexBasis: "40%", maxHeight: "25rem", padding: "3rem 1.5rem" }}
+      >
         <h1 style={{ textAlign: "center" }}>Add New Status</h1>
         <form onSubmit={handleSubmit(addNewStatusHandler)} noValidate>
           <Stack spacing={4} marginTop={4}>

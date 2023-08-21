@@ -30,7 +30,7 @@ export const Heatmap = ({ data }: HeatmapProps) => {
         height: "auto",
         display: "flex",
         justifyContent: "center",
-        backgroundColor: "rgba(0,0,0,.08)",
+        // backgroundColor: "rgba(0,0,0,.08)",
       }}
     >
       <Renderer

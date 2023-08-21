@@ -57,15 +57,15 @@ const InsertNewColumn = () => {
       });
       return;
     }
-    const defaultStatus = statusData.find(
-      (status: IStatus) => status.value === 0
+    const defaultStatus: IStatus = statusData.find(
+      (status: IStatus) => status.value === 40
     );
     const newItems = clientsData.map((client: IClient) => ({
       x: client.title,
       y: newColumnName,
       value: {
-        statusValue: defaultStatus ? defaultStatus.value : 0,
-        statusTitle: defaultStatus ? defaultStatus.title : "N/A",
+        statusValue: defaultStatus.value,
+        statusTitle: defaultStatus.title,
       },
     }));
 
@@ -81,11 +81,7 @@ const InsertNewColumn = () => {
   return (
     <>
       <Card
-        style={{
-          width: "50%",
-          padding: "1rem",
-          margin: "5rem auto 0 auto",
-        }}
+        style={{ flexBasis: "40%", maxHeight: "20rem", padding: "3rem 1.5rem" }}
       >
         <h1 style={{ textAlign: "center" }}>Insert New Column</h1>
         <form onSubmit={handleSubmit(addNewColumnHandler)} noValidate>

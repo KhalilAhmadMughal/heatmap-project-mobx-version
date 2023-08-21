@@ -1,5 +1,5 @@
 import { Stack, TextField, Button, Link, Grid, Card } from "@mui/material";
-import { IClient, IColumn, IHeatmapItem } from "../types";
+import { IClient, IColumn, IHeatmapItem, IStatus } from "../types";
 import { useSelector } from "react-redux";
 
 import { useForm } from "react-hook-form";
@@ -55,13 +55,15 @@ const InsertNewClient = () => {
       });
       return;
     }
-
+    const defaultStatus: IStatus = statusData.find(
+      (item: IStatus) => item.value === 40
+    );
     const newItems: IHeatmapItem[] = columnsData.map((column: IColumn) => ({
       x: newClient,
       y: column.title,
       value: {
-        statusValue: statusData[0].value,
-        statusTitle: statusData[0].title,
+        statusValue: defaultStatus.value,
+        statusTitle: defaultStatus.title,
       },
     }));
     const peramObject = {
@@ -69,6 +71,7 @@ const InsertNewClient = () => {
       items: newItems,
       title: "clients",
     };
+
     dispatch(insertNewClientOrColumnThunk(peramObject));
     myForm.setValue("client", "");
   };
@@ -76,11 +79,7 @@ const InsertNewClient = () => {
   return (
     <>
       <Card
-        style={{
-          width: "50%",
-          padding: "1rem",
-          margin: "5rem auto 0 auto",
-        }}
+        sx={{ flexBasis: "40%", maxHeight: "20rem", padding: "3rem 1.5rem" }}
       >
         <h1 style={{ textAlign: "center" }}>Insert New Client</h1>
         <form onSubmit={handleSubmit(adnnNewClientHandler)} noValidate>

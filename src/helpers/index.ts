@@ -1,88 +1,69 @@
-import { IClient, IColumn, IHeatmapItem, IStatus } from "../types";
-
 // export const COLORS = ["#D3D3D3", "#800C0C", "#12127D", "#9D930F", "#1F6E1F"];
 
-export const COLORS = ["#D3D3D3", "#1F6E1F", "#800C0C", "#9D930F", "#FFFFFF"];
+export const COLORS = ["#1F6E1F", "#800C0C", "#9D930F", "#D3D3D3"];
 
-export const THRESHOLDS = [0, 10, 20, 30, 40];
+export const THRESHOLDS = [10, 20, 30, 40];
 
-export const clients: IClient[] = [
+export const clients = [
   {
-    id: 1,
     title: "acme crop",
   },
   {
-    id: 2,
     title: "abc inc",
   },
   {
-    id: 3,
     title: "xyz llc",
   },
   {
-    id: 4,
     title: "test 1",
   },
   {
-    id: 5,
     title: "test 2",
   },
   {
-    id: 6,
     title: "test 3",
   },
   {
-    id: 7,
     title: "test 4",
   },
 ];
-export const columns: IColumn[] = [
-  { id: 1, title: "core" },
-  { id: 2, title: "distribution" },
-  { id: 3, title: "access" },
-  { id: 4, title: "wireless" },
-  { id: 5, title: "mdm" },
-  { id: 6, title: "routing" },
-  { id: 7, title: "waas" },
-  { id: 8, title: "sd-wan" },
-  { id: 9, title: "carrier" },
-  { id: 10, title: "voice" },
-  { id: 11, title: "contact center" },
-  { id: 12, title: "video" },
+export const columns = [
+  { title: "core" },
+  { title: "distribution" },
+  { title: "access" },
+  { title: "wireless" },
+  { title: "mdm" },
+  { title: "routing" },
+  { title: "waas" },
+  { title: "sd-wan" },
+  { title: "carrier" },
+  { title: "voice" },
+  { title: "contact center" },
+  { title: "video" },
 ];
-export const salesStatus: IStatus[] = [
+export const salesStatus = [
   {
-    id: 1,
-    title: "N/A",
-    value: 0,
-    color: "#D3D3D3",
-  },
-  {
-    id: 2,
     title: "customer",
     value: 10,
     color: "#1F6E1F",
   },
   {
-    id: 3,
     title: "no opportunity",
     value: 20,
     color: "#800C0C",
   },
   {
-    id: 4,
     title: "potential opportunity",
     value: 30,
     color: "#9D930F",
   },
   {
-    id: 5,
     title: "don't know",
     value: 40,
-    color: "#FFFFFF",
+    color: "#D3D3D3",
   },
 ];
-export const dataSet: IHeatmapItem[] = [
+export const dataSet = [
   {
     x: "acme crop",
     y: "core",

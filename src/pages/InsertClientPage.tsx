@@ -1,10 +1,18 @@
+import { Box } from "@mui/material";
 import InsertNewClient from "../components/InsertNewClient";
 
 const InsertClientPage = () => {
   return (
-    <div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        padding: "4rem 0",
+      }}
+    >
       <InsertNewClient />
-    </div>
+    </Box>
   );
 };
 

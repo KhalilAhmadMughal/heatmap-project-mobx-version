@@ -1,10 +1,18 @@
+import { Box } from "@mui/material";
 import InsertNewStatus from "../components/InsertNewStatus";
 
 const InsertStatusPage = () => {
   return (
-    <div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        padding: "4rem 0",
+      }}
+    >
       <InsertNewStatus />
-    </div>
+    </Box>
   );
 };
 
