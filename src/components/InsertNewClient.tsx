@@ -1,13 +1,13 @@
+import { observer } from "mobx-react-lite";
+import { useContext } from "react";
 import { Stack, TextField, Button, Link, Grid, Card } from "@mui/material";
-import { IClient, IColumn, IHeatmapItem, IStatus } from "../types";
-import { useSelector } from "react-redux";
+import { IClient, IColumn, IStatus } from "../types";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import store from "../store";
-import { insertNewClientOrColumnThunk } from "../store/heatmap/heatmapThunks";
 import { UpdatingLoader } from "./UpdatingLoader";
+import { StoreContext } from "../store.context";
 
 type FormValues = {
   client: string;
@@ -21,13 +21,13 @@ const schema = yup.object({
     .matches(/^[^\d].*/, "Client name cannot start with an integer."),
 });
 
-const InsertNewClient = () => {
-  const dispatch = store.dispatch;
-  const heatmapStoreState = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state) => (state as any).heatmapReducer
-  );
-  const { clients, columns, salesStatus, isUploading } = heatmapStoreState;
+const InsertNewClientView = () => {
+  const myStore = useContext(StoreContext);
+  const { insertNewClientOrColumn_method, getHeatmapStoreState_method } =
+    myStore.heatmapStore;
+  const { clients, columns, salesStatus, isUploading } =
+    getHeatmapStoreState_method();
+
   const myForm = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
@@ -55,15 +55,13 @@ const InsertNewClient = () => {
       });
       return;
     }
-    const defaultStatus: IStatus = statusData.find(
-      (item: IStatus) => item.value === 40
-    );
-    const newItems: IHeatmapItem[] = columnsData.map((column: IColumn) => ({
+    const defaultStatus = statusData.find((item: IStatus) => item.value === 40);
+    const newItems = columnsData.map((column: IColumn) => ({
       x: newClient,
       y: column.title,
       value: {
-        statusValue: defaultStatus.value,
-        statusTitle: defaultStatus.title,
+        statusValue: defaultStatus?.value,
+        statusTitle: defaultStatus?.title,
       },
     }));
     const peramObject = {
@@ -71,8 +69,7 @@ const InsertNewClient = () => {
       items: newItems,
       title: "clients",
     };
-
-    dispatch(insertNewClientOrColumnThunk(peramObject));
+    insertNewClientOrColumn_method(peramObject);
     myForm.setValue("client", "");
   };
 
@@ -116,4 +113,5 @@ const InsertNewClient = () => {
   );
 };
 
+const InsertNewClient = observer(InsertNewClientView);
 export default InsertNewClient;

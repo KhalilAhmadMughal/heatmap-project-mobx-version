@@ -1,11 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { StoreContext } from "../../store.context";
+import { IHeatmapItem, IStatus } from "../../types";
+
 import * as d3 from "d3";
 import { InteractionData } from "./Heatmap";
-import { IHeatmapItem, IStatus } from "../../types";
 import UpdateStatusModal from "../UpdateStatusModal";
-import { useSelector } from "react-redux";
+import { Timestamp } from "firebase/firestore";
 
 const MARGIN = { top: 20, right: 0, bottom: 60, left: 120 };
+const clickedItemInitialState = {
+  id: "",
+  x: "",
+  y: "",
+  value: { statusTitle: "", statusValue: 0 },
+  createdAt: Timestamp.now(),
+};
 
 type RendererProps = {
   width: number;
@@ -14,7 +24,7 @@ type RendererProps = {
   setHoveredCell: (hoveredCell: InteractionData | null) => void;
 };
 
-export const Renderer = ({
+const RendererView = ({
   width,
   height,
   data,
@@ -23,18 +33,12 @@ export const Renderer = ({
   const [statusColors, setStatusColors] = useState<string[]>([]);
   const [thresholds, setThresholds] = useState<number[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const [clickedItemData, setClieckedItemdata] = useState<{
-    id: string;
-    x: string;
-    y: string;
-    value: number;
-  }>({ id: "", x: "", y: "", value: 0 });
-
-  const heatmapStoreState = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state) => (state as any).heatmapReducer
+  const [clickedItemData, setClieckedItemdata] = useState<IHeatmapItem>(
+    clickedItemInitialState
   );
-  const { salesStatus } = heatmapStoreState;
+
+  const myStore = useContext(StoreContext);
+  const { salesStatus } = myStore.heatmapStore.getHeatmapStoreState_method();
 
   useEffect(() => {
     setStatusColors(() => salesStatus.map((status: IStatus) => status.color));
@@ -44,7 +48,7 @@ export const Renderer = ({
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => {
     setOpenModal(false);
-    setClieckedItemdata({ id: "", x: "", y: "", value: 0 });
+    setClieckedItemdata(clickedItemInitialState);
   };
 
   const gap = 50;
@@ -110,7 +114,8 @@ export const Renderer = ({
             id: d.id,
             x: d.x,
             y: d.y,
-            value: d.value.statusValue,
+            value: d.value,
+            createdAt: d.createdAt,
           });
           handleOpen();
         }}
@@ -199,3 +204,5 @@ export const Renderer = ({
     </>
   );
 };
+
+export const Renderer = observer(RendererView);

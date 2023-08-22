@@ -1,13 +1,13 @@
+import { observer } from "mobx-react-lite";
+import { useContext } from "react";
 import { IStatus } from "../types";
-import store from "../store";
-import { useSelector } from "react-redux";
-import { insertNewSalesStatusThunk } from "../store/heatmap/heatmapThunks";
 
 import { Card, Stack, Grid, TextField, Button, Link } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { UpdatingLoader } from "./UpdatingLoader";
+import { StoreContext } from "../store.context";
 
 type FormValues = {
   statusTitle: string;
@@ -29,13 +29,11 @@ const schema = yup.object({
     .matches(/^#[0-9a-fA-F]{6}$/, "Invalid color format. Use #rrggbb"),
 });
 
-const InsertNewStatus = () => {
-  const dispatch = store.dispatch;
-  const heatmapStoreState = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state) => (state as any).heatmapReducer
-  );
-  const { isUploading, salesStatus } = heatmapStoreState;
+const InsertNewStatusView = () => {
+  const myStore = useContext(StoreContext);
+  const { getHeatmapStoreState_method, insertNewSalesStatus_method } =
+    myStore.heatmapStore;
+  const { isUploading, salesStatus } = getHeatmapStoreState_method();
 
   const myForm = useForm<FormValues>({
     resolver: yupResolver(schema) as never,
@@ -94,8 +92,7 @@ const InsertNewStatus = () => {
       value: statusData[statusData.length - 1].value + 10,
       color: enteredColor as never,
     };
-    // console.log(newSalesStatusObject);
-    dispatch(insertNewSalesStatusThunk(newSalesStatusObject));
+    insertNewSalesStatus_method(newSalesStatusObject);
     myForm.reset();
   };
 
@@ -146,4 +143,5 @@ const InsertNewStatus = () => {
   );
 };
 
+const InsertNewStatus = observer(InsertNewStatusView);
 export default InsertNewStatus;

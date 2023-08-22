@@ -25,7 +25,7 @@ export interface IHeatmapItem {
   y: string;
   value: {
     statusValue: number;
-    statusTitle: string | number;
+    statusTitle: string;
   };
   createdAt: Timestamp;
 }

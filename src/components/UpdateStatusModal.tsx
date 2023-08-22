@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useContext, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import {
   Card,
   Stack,
@@ -17,7 +17,7 @@ import {
 
 import { useForm } from "react-hook-form";
 import { IHeatmapItem, IStatus } from "../types";
-import { updateHeatmapItemReducer } from "../store/heatmap";
+import { StoreContext } from "../store.context";
 
 type FormValues = { inputStatusId: string };
 
@@ -38,17 +38,20 @@ const buttonsContainerStyles = {
   gap: "1rem",
 };
 
-const UpdateStatusModal = (props: {
+interface IProps {
   openModal: boolean;
   handleOpen: () => void;
   handleClose: () => void;
-  clickedItemData: { id: string; x: string; y: string; value: number };
+  clickedItemData: IHeatmapItem;
   salesStatus: IStatus[];
   dataSet: IHeatmapItem[];
-}) => {
+}
+
+const UpdateStatusModalView = (props: IProps) => {
   const { openModal, handleClose, dataSet, salesStatus, clickedItemData } =
     props;
-  const dispatch = useDispatch();
+  const myStore = useContext(StoreContext);
+  const { updateHeatmapItem_method } = myStore.heatmapStore;
   const myForm = useForm<FormValues>({
     defaultValues: {
       inputStatusId: "",
@@ -63,7 +66,7 @@ const UpdateStatusModal = (props: {
 
   useEffect(() => {
     const currentStatus = salesStatus.find(
-      (status) => status.value === clickedItemData.value
+      (status) => status.value === clickedItemData.value.statusValue
     );
     myForm.setValue("inputStatusId", currentStatus ? currentStatus.id : "");
   }, [clickedItemData, myForm, salesStatus]);
@@ -74,25 +77,21 @@ const UpdateStatusModal = (props: {
   };
 
   const updateStatusHandler = (data: FormValues) => {
-    const heatmapDataSet = dataSet;
     const statusData = salesStatus;
-
     const selectedStatus = statusData.find(
       (status) => status.id === data.inputStatusId
     );
 
-    const valueObject: { statusTitle: string | number; statusValue: number } = {
+    const valueObject: { statusTitle: string; statusValue: number } = {
       statusTitle: selectedStatus ? selectedStatus.title : "N/A",
       statusValue: selectedStatus ? selectedStatus.value : 0,
     };
-    const foundItem = heatmapDataSet.find(
-      (item) => item.id === clickedItemData.id
-    );
-    const updatedHeatmapItemObject = {
-      ...foundItem,
+    const updatedHeatmapItemObject: IHeatmapItem = {
+      ...clickedItemData,
       value: valueObject,
     };
-    dispatch(updateHeatmapItemReducer(updatedHeatmapItemObject));
+
+    updateHeatmapItem_method(updatedHeatmapItemObject);
     closeMiddlewareHandler();
   };
 
@@ -183,4 +182,5 @@ const UpdateStatusModal = (props: {
   );
 };
 
+const UpdateStatusModal = observer(UpdateStatusModalView);
 export default UpdateStatusModal;

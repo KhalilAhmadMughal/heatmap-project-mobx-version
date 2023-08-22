@@ -1,13 +1,13 @@
+import { observer } from "mobx-react-lite";
+import { useContext } from "react";
 import { IClient, IColumn, IStatus } from "../types";
 import { Stack, TextField, Button, Link, Grid, Card } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
 
 import { UpdatingLoader } from "./UpdatingLoader";
-import { insertNewClientOrColumnThunk } from "../store/heatmap/heatmapThunks";
-import store from "../store";
+import { StoreContext } from "../store.context";
 
 type FormValues = {
   columnName: string;
@@ -21,14 +21,13 @@ const schema = yup.object({
     .matches(/^[^\d].*/, "column name cannot start with an integer."),
 });
 
-const InsertNewColumn = () => {
-  const dispatch = store.dispatch;
+const InsertNewColumnView = () => {
+  const myStore = useContext(StoreContext);
+  const { insertNewClientOrColumn_method, getHeatmapStoreState_method } =
+    myStore.heatmapStore;
+  const { clients, columns, salesStatus, isUploading } =
+    getHeatmapStoreState_method();
 
-  const heatmapStoreState = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state) => (state as any).heatmapReducer
-  );
-  const { clients, columns, salesStatus, isUploading } = heatmapStoreState;
   const myForm = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
@@ -57,15 +56,15 @@ const InsertNewColumn = () => {
       });
       return;
     }
-    const defaultStatus: IStatus = statusData.find(
+    const defaultStatus = statusData.find(
       (status: IStatus) => status.value === 40
     );
     const newItems = clientsData.map((client: IClient) => ({
       x: client.title,
       y: newColumnName,
       value: {
-        statusValue: defaultStatus.value,
-        statusTitle: defaultStatus.title,
+        statusValue: defaultStatus?.value,
+        statusTitle: defaultStatus?.title,
       },
     }));
 
@@ -74,7 +73,8 @@ const InsertNewColumn = () => {
       items: newItems,
       title: "columns",
     };
-    dispatch(insertNewClientOrColumnThunk(peramObject));
+
+    insertNewClientOrColumn_method(peramObject);
     myForm.setValue("columnName", "");
   };
 
@@ -119,4 +119,5 @@ const InsertNewColumn = () => {
   );
 };
 
+const InsertNewColumn = observer(InsertNewColumnView);
 export default InsertNewColumn;

@@ -1,15 +1,14 @@
+import { useContext } from "react";
+import { observer } from "mobx-react-lite";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
-import { useDispatch, useSelector } from "react-redux";
 import { Heatmap } from "../components/heatmap/Heatmap";
+import { StoreContext } from "../store.context";
 
-const HeatmapPage = () => {
-  const dispatch = useDispatch();
-  const heatmapStoreState = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state) => (state as any).heatmapReducer
-  );
-  const { isLoading, dataSet, error } = heatmapStoreState;
+const HeatmapPageView = () => {
+  const myStore = useContext(StoreContext);
+  const { getHeatmapStoreState_method } = myStore.heatmapStore;
+  const { isLoading, dataSet, error } = getHeatmapStoreState_method();
 
   return (
     <Box
@@ -29,10 +28,9 @@ const HeatmapPage = () => {
           {error || "Failed to fetch Data!"}
         </Typography>
       )}
-      {/* <Heatmap width={1540} height={768} data={newDataSet} />
-       */}
     </Box>
   );
 };
 
+const HeatmapPage = observer(HeatmapPageView);
 export default HeatmapPage;

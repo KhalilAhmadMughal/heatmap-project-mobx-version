@@ -1,16 +1,16 @@
 import "./App.css";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import { fetchHeatmapData } from "./store/heatmap/heatmapThunks";
 
 import { clientSideRoutes } from "./routes";
-import store from "./store";
+import { StoreContext } from "./store.context";
+import { observer } from "mobx-react-lite";
 
-function App() {
-  const dispatch = store.dispatch;
-
+function AppView() {
+  const store = useContext(StoreContext);
+  const { getHeatmapData_method } = store.heatmapStore;
   useEffect(() => {
-    dispatch(fetchHeatmapData() as never);
+    getHeatmapData_method();
   }, []);
 
   return (
@@ -23,4 +23,5 @@ function App() {
     </main>
   );
 }
+const App = observer(AppView);
 export default App;
